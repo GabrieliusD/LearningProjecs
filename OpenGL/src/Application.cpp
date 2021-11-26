@@ -6,10 +6,11 @@
 #include <sstream>
 #include "Renderer.h"
 #include "VertexBuffer.h"
+#include "VertexBufferLayout.h"
 #include "IndexBuffer.h"
 #include "VertexArray.h"
 #include "Shader.h"
-
+#include "Texture.h"
 
 int main(void)
 {
@@ -41,11 +42,11 @@ int main(void)
     }
 
     std::cout << glGetString(GL_VERSION) << std::endl;
-    float positions[12] = {
-        -0.5f, -0.5f,
-        0.5f, -0.5f,
-        0.5f, 0.5f,
-        -0.5f,0.5f,
+    float positions[16] = {
+        -0.5f, -0.5f, 0.0f, 0.0f,
+        0.5f, -0.5f, 1.0f, 0.0f,
+        0.5f, 0.5f, 1.0f, 1.0f,
+        -0.5f,0.5f, 0.0f, 1.0f
     };
     unsigned int indices[6] =
     {
@@ -60,32 +61,37 @@ int main(void)
     IndexBuffer ib(indices, 6);
 
     VertexArray va;
-    VertexBuffer vb(positions, 4 * 2 * sizeof(float));
+    VertexBuffer vb(positions, 4 * 4 * sizeof(float));
     VertexBufferLayout layout;
     layout.Push<float>(2);
+    layout.Push<float>(2);
     va.AddBuffer(vb, layout);
-
+    
 
 
     Shader shader("res/shaders/Basic.glsl");
     shader.Bind();
 
     shader.SetUniform4f("u_Color", 1, 1, 0, 1);
+
+
+    Texture texture("res/textures/icon.jpg");
+    texture.Bind();
+    //shader.SetUniform1i("u_Texture", 0);
     shader.Unbind();
     vb.Unbind();
     ib.Unbind();
+
+    Renderer renderer;
     float r = 0.0f;
     /* Loop until the user closes the window */
     while (!glfwWindowShouldClose(window))
     {
+        renderer.Clear();
         shader.Bind();
-        r += .05f;
-        /* Render here */
-        glClear(GL_COLOR_BUFFER_BIT);
         shader.SetUniform4f("u_Color", r, r, r, 1);
-        va.Bind();
-        ib.Bind();
-        GLCall(glDrawElements(GL_TRIANGLES,6,GL_UNSIGNED_INT,nullptr));
+        r += .05f;
+        renderer.Draw(va, ib, shader);
         /* Swap front and back buffers */
         glfwSwapBuffers(window);
         if (r >= 1)
@@ -94,6 +100,6 @@ int main(void)
         /* Poll for and process events */
         glfwPollEvents();
     }
-    glfwTerminate();
+    GLCall(glfwTerminate());
     return 0;
 }
