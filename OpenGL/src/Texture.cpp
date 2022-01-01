@@ -27,7 +27,7 @@ Texture::Texture(const std::string& path) :m_FilePath(path),m_LocalBuffer(nullpt
 
 Texture::~Texture()
 {
-	glDeleteTextures(1, &m_RendererID);
+	//glDeleteTextures(1, &m_RendererID);
 }
 
 void Texture::Bind(unsigned int slot) const

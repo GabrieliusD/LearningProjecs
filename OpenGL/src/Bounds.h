@@ -24,6 +24,6 @@ class Bounds
 public:
 	static BoundingBox GetBounds(const std::vector<glm::vec3>& vertices);
 
-	bool intersect(const Ray& ray, const BoundingBox& bounds);
+	static bool intersect(const Ray& ray, const BoundingBox& bounds);
 };
 

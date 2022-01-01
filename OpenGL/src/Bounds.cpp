@@ -43,6 +43,20 @@ bool Bounds::intersect(const Ray& ray, const BoundingBox& bounds)
 	if (tymin > tymax) swap(tymin, tymax);
 
 	if ((tMin > tymax) || (tymin > tMax)) return false;
-	//float tmin = ()
+	
+	if (tymin > tMin) tMin = tymin;
+
+	if (tymax < tMax) tMax = tymax;
+
+	float tzmin = (bounds.min.z - ray.Origin.z) / ray.Direction.z;
+	float tzmax = (bounds.max.z - ray.Origin.z) / ray.Direction.z;
+
+	if (tzmin > tzmax) swap(tzmin, tzmax);
+	if ((tMin > tzmax) || (tzmin > tMax))
+		return false;
+
+	if (tzmin > tMin) tMin = tzmin;
+	if (tzmax < tMax) tMax = tzmax;
+
 	return true;
 }
